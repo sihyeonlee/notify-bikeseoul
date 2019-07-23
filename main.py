@@ -1,6 +1,7 @@
 import requests
 from win10toast import ToastNotifier
 from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
 
 
 scheduler = BackgroundScheduler()
@@ -47,11 +48,18 @@ def loop_task(threshold):
         toaster.show_toast("현재 따릉이 " + str(bike_cnt) + "개 남았습니다.", "바로 대여하세요.")
 
 
-bike_low_cnt = int(input("몇 대 이하인 경우 알람을 울릴까요?"))
-set_hour = input("어느 시간 대에 알람을 활성화 할까요? ex) 0-23")
-set_second = "*/" + str(input("몇 초 주기로 알려드릴까요?"))
+bike_low_cnt = int(input("몇 대 이하인 경우 알람을 울릴까요?\n"))
+set_hour = input("어느 시간 대에 알람을 활성화 할까요? ex) 0-23\n")
+set_second = "*/" + str(input("몇 초 주기로 알려드릴까요?\n"))
 
-scheduler.add_job(loop_task, 'cron', hour=set_hour, second=set_second, id="bike_toaster", args=[bike_low_cnt])
+trigger = CronTrigger(hour=set_hour, second=set_second)
+scheduler.add_job(loop_task, trigger, args=[bike_low_cnt])
 
 while True:
     pass
+
+
+"""
+https://lemontia.tistory.com/508
+https://towardsdatascience.com/how-to-make-windows-10-toast-notifications-with-python-fb3c27ae45b9
+"""
